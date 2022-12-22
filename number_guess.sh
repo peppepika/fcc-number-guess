@@ -18,3 +18,14 @@ then
 else
   echo "Welcome back, $NAME! You have played <games_played> games, and your best game took <best_game> guesses."
 fi
+
+echo "Guess the secret number between 1 and 1000:"
+NUMBER_OF_GUESS=0
+read GUESS
+#to do while loop?
+if [[ $GUESS != $NUMBER ]]
+then
+
+else
+  echo "You guessed it in $NUMBER_OF_GUESS tries. The secret number was $NUMBER. Nice job!"
+fi
