@@ -15,17 +15,18 @@ then
   $PSQL "INSERT INTO users(username) VALUES('$NAME')"
   echo "Welcome, $NAME! It looks like this is your first time here."
   USER_ID=$($PSQL "SELECT user_id FROM users WHERE username='$NAME'")
+  echo $USER_ID #testing
 else
   echo "Welcome back, $NAME! You have played <games_played> games, and your best game took <best_game> guesses."
 fi
 
 echo "Guess the secret number between 1 and 1000:"
-NUMBER_OF_GUESS=0
+NUMBER_OF_GUESS=1
+echo $NUMBER #testing
 read GUESS
-#to do while loop?
-if [[ $GUESS != $NUMBER ]]
+#working on correct guess
+if [[ $GUESS == $NUMBER ]]
 then
-
-else
+  $PSQL "INSERT INTO games(user_id, n_guesses) VALUES($USER_ID, $NUMBER_OF_GUESS)"
   echo "You guessed it in $NUMBER_OF_GUESS tries. The secret number was $NUMBER. Nice job!"
 fi
