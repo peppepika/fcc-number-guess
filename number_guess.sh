@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PSQL="psql --username=freecodecamp --dbname=number_guessing_game -t --no-align -c"
+PSQL="psql --username=freecodecamp --dbname=number_guess -t --no-align -c"
 
 echo -e "\n~~ Number Guessing Game ~~\n"
 
@@ -12,7 +12,7 @@ read NAME
 USER_ID=$($PSQL "SELECT user_id FROM users WHERE username='$NAME'")
 if [[ -z $USER_ID ]] #true for new user
 then
-  $PSQL "INSERT username VALUES('$NAME')"
+  $PSQL "INSERT INTO users(username) VALUES('$NAME')"
   echo "Welcome, $NAME! It looks like this is your first time here."
   USER_ID=$($PSQL "SELECT user_id FROM users WHERE username='$NAME'")
 else
