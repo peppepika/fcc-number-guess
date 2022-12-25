@@ -9,23 +9,24 @@ NUMBER_OF_GUESS=0
 echo -e 'Enter your username:'
 read NAME
 
-function GUESS() {
-    NUMBER_OF_GUESS=$((NUMBER_OF_GUESS+=1))
-    read GUESS
-}
-
 #check if username is already present
 USER_ID=$($PSQL "SELECT user_id FROM users WHERE username='$NAME'")
 if [[ -z $USER_ID ]] #true for new user
 then
-  $PSQL "INSERT INTO users(username) VALUES('$NAME')"
+  $PSQL "INSERT INTO users(username) VALUES('$NAME')" #adding new user to database and getting id
   echo "Welcome, $NAME! It looks like this is your first time here."
   USER_ID=$($PSQL "SELECT user_id FROM users WHERE username='$NAME'")
 else
-  N_OF_GAMES=$($PSQL "SELECT COUNT(game_id) FROM games WHERE user_id=$USER_ID")
+  N_OF_GAMES=$($PSQL "SELECT COUNT(game_id) FROM games WHERE user_id=$USER_ID") #welcoming returning player
   BEST_GAME=$($PSQL "SELECT n_guesses FROM games ORDER BY n_guesses LIMIT 1")
   echo "Welcome back, $NAME! You have played $N_OF_GAMES games, and your best game took $BEST_GAME guesses."
 fi
+
+#guess function
+function GUESS() {
+    NUMBER_OF_GUESS=$((NUMBER_OF_GUESS+=1))
+    read GUESS
+}
 
 echo "Guess the secret number between 1 and 1000:"
 echo $NUMBER #testing
@@ -38,6 +39,18 @@ do
   NUMBER_OF_GUESS=$((NUMBER_OF_GUESS-=1))
   GUESS again  
 done
+
+#if guess is too high
+if [[ $GUESS > $NUMBER ]]
+then
+  echo "It's lower than that, guess again:"
+  GUESS
+elif [[ $GUESS < $NUMBER ]]
+then
+  echo "It's higher than that, guess again:"
+  GUESS
+fi
+
 # correct guess
 if [[ $GUESS == $NUMBER ]]
 then
