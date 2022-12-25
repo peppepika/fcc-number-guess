@@ -5,8 +5,14 @@ PSQL="psql --username=freecodecamp --dbname=number_guess -t --no-align -c"
 echo -e "\n~~ Number Guessing Game ~~\n"
 
 NUMBER=$(( RANDOM % 1000 + 1 ))
+NUMBER_OF_GUESS=0
 echo -e 'Enter your username:'
 read NAME
+
+function GUESS() {
+    NUMBER_OF_GUESS=$((NUMBER_OF_GUESS+=1))
+    read GUESS
+}
 
 #check if username is already present
 USER_ID=$($PSQL "SELECT user_id FROM users WHERE username='$NAME'")
@@ -22,9 +28,16 @@ else
 fi
 
 echo "Guess the secret number between 1 and 1000:"
-NUMBER_OF_GUESS=1
 echo $NUMBER #testing
-read GUESS
+GUESS
+
+#if input is different than integer
+until [[ $GUESS =~ ^[0-9]+$ ]]
+do
+  echo 'That is not an integer, guess again:'
+  NUMBER_OF_GUESS=$((NUMBER_OF_GUESS-=1))
+  GUESS again  
+done
 # correct guess
 if [[ $GUESS == $NUMBER ]]
 then
