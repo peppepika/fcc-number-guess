@@ -18,8 +18,8 @@ then
   USER_ID=$($PSQL "SELECT user_id FROM users WHERE username='$NAME'")
 else
   N_OF_GAMES=$($PSQL "SELECT COUNT(game_id) FROM games WHERE user_id=$USER_ID") #welcoming returning player
-  BEST_GAME=$($PSQL "SELECT n_guesses FROM games ORDER BY n_guesses LIMIT 1")
-  echo "Welcome back, $NAME! You have played $N_OF_GAMES games, and your best game took $BEST_GAME guesses."
+  BEST_GAME=$($PSQL "SELECT n_guesses FROM games WHERE user_id=$USER_ID ORDER BY n_guesses LIMIT 1")
+  echo Welcome back, $NAME! You have played $N_OF_GAMES games, and your best game took $BEST_GAME guesses.
 fi
 
 #guess function
@@ -29,7 +29,7 @@ function GUESS() {
 }
 
 echo "Guess the secret number between 1 and 1000:"
-echo $NUMBER #testing
+#echo $NUMBER #testing
 GUESS
 
 #if input is different than secret number loop starts
