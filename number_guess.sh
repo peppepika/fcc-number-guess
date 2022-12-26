@@ -13,7 +13,7 @@ read NAME
 USER_ID=$($PSQL "SELECT user_id FROM users WHERE username='$NAME'")
 if [[ -z $USER_ID ]] #true for new user
 then
-  $PSQL "INSERT INTO users(username) VALUES('$NAME')" #adding new user to database and getting id
+  INSERT=$($PSQL "INSERT INTO users(username) VALUES('$NAME')") #adding new user to database and getting id
   echo "Welcome, $NAME! It looks like this is your first time here."
   USER_ID=$($PSQL "SELECT user_id FROM users WHERE username='$NAME'")
 else
@@ -32,28 +32,21 @@ echo "Guess the secret number between 1 and 1000:"
 echo $NUMBER #testing
 GUESS
 
-#if input is different than integer
-until [[ $GUESS =~ ^[0-9]+$ ]]
+#if input is different than secret number loop starts
+until [[ $GUESS -eq $NUMBER ]]
 do
-  echo 'That is not an integer, guess again:'
-  NUMBER_OF_GUESS=$((NUMBER_OF_GUESS-=1))
+  if [[ $GUESS =~ ^[a-z]+$ ]] #check if input contains letters
+  then
+    echo 'That is not an integer, guess again:'
+    NUMBER_OF_GUESS=$((NUMBER_OF_GUESS-=1))
+  elif [[ $GUESS -gt $NUMBER ]] # guess and number comparison
+  then
+    echo "It's lower than that, guess again:"
+  else
+    echo "It's higher than that, guess again:"
+  fi
   GUESS again  
 done
 
-#if guess is too high
-if [[ $GUESS > $NUMBER ]]
-then
-  echo "It's lower than that, guess again:"
-  GUESS
-elif [[ $GUESS < $NUMBER ]]
-then
-  echo "It's higher than that, guess again:"
-  GUESS
-fi
-
-# correct guess
-if [[ $GUESS == $NUMBER ]]
-then
-  $PSQL "INSERT INTO games(user_id, n_guesses) VALUES($USER_ID, $NUMBER_OF_GUESS)"
-  echo "You guessed it in $NUMBER_OF_GUESS tries. The secret number was $NUMBER. Nice job!"
-fi
+INSERT1=$($PSQL "INSERT INTO games(user_id, n_guesses) VALUES($USER_ID, $NUMBER_OF_GUESS)")
+echo "You guessed it in $NUMBER_OF_GUESS tries. The secret number was $NUMBER. Nice job!"
